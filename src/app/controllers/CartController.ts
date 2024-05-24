@@ -183,7 +183,7 @@ class CartController {
         const t = await sequelize.transaction();
         try {
             const id_student = req.student.data.id;
-            const { id_course } = req.body.data;
+            const { id_course, id_combo } = req.body.data;
 
             const cart = await Cart.findOne({
                 where: {
@@ -191,18 +191,30 @@ class CartController {
                 }
             });
 
-            await CartCourse.destroy({
-                where: {
-                    id_cart: cart.id,
-                    id_course
-                },
-            }, {
-                transaction: t
-            });
+            if (id_course) {
+                await CartCourse.destroy({
+                    where: {
+                        id_cart: cart.id,
+                        id_course
+                    },
+                }, {
+                    transaction: t
+                });
+            } else if (id_combo) {
+                await CartCourse.destroy({
+                    where: {
+                        id_cart: cart.id,
+                        id_combo
+                    },
+                }, {
+                    transaction: t
+                });
+            }
 
             res.status(200).json({
                 message: "Course has been deleted from cart",
-                course: id_course
+                course: id_course,
+                combo: id_combo
             });
         } catch (error: any) {
             console.log(error.message);
