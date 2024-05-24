@@ -100,7 +100,10 @@ class CartController {
                 }
             }
 
-            res.status(200).json(courseList);
+            res.status(200).json({
+                courses: courseList,
+                combos: comboList
+            });
         } catch (error: any) {
             console.log(error.message);
             res.status(500).json({
