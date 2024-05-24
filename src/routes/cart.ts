@@ -13,7 +13,7 @@ router.route('/student')
     .post(Authorize.verifyStudent, CheckingCart.checkAddCourseToCart, CartController.addCourseToCart)
     .delete(Authorize.verifyStudent, CheckingCart.checkDeleteCourseFromCart, CartController.deleteCourseFromCart);
 
-router.route('/check/:courseId/:studentId')
+router.route('/check/:productId/:studentId')
     .get(CartController.checkCourseInCart);
 
     

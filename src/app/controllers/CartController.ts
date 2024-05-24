@@ -113,31 +113,49 @@ class CartController {
         }
     }
 
-    // [GET] /cart/check/:courseId/:studentId
+    // [GET] /cart/check/:productId/:studentId
     checkCourseInCart = async (req: Request, res: Response, _next: NextFunction) => {
         try {
             const id_user = req.params.studentId;
-            const id_course = req.params.courseId;
+            const id_product = req.params.productId;
+
+            const product = req.query.product;
 
             const cart = await Cart.findOne({
                 where: { id_user }
             });
 
-            const record = await CartCourse.findOne({
-                where: {
-                    id_cart: cart.id,
-                    id_course
-                }
-            });
-
-            if (!record) {
-                return res.status(200).json({
-                    result: false
+            if (typeof product === "string" && product === "course") {
+                const record = await CartCourse.findOne({
+                    where: {
+                        id_cart: cart.id,
+                        id_course: id_product
+                    }
                 });
+    
+                if (record) {
+                    return res.status(200).json({
+                        result: true
+                    });
+                }
+                
+            } else if (typeof product === "string" && product === "combo") {
+                const record = await CartCourse.findOne({
+                    where: {
+                        id_cart: cart.id,
+                        id_combo: id_product
+                    }
+                });
+    
+                if (record) {
+                    return res.status(200).json({
+                        result: true
+                    });
+                }
             }
 
-            res.status(200).json({
-                result: true
+            res.status(203).json({
+                result: false
             });
         } catch (error: any) {
             console.log(error.message);
