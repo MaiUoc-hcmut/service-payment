@@ -234,10 +234,10 @@ class PaymentController {
             const dataCourses: any[] = [];
             const dataCombos: any[] = [];
             const courses: string[] = [];
+            const combos: string[] = [];
 
             for (const record of cartCourses) {
                 if (record.id_course) {
-                    console.log(record.id_course, 240);
                     const course = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${record.id_course}`);
 
                     let price = course.data.price;
@@ -261,8 +261,17 @@ class PaymentController {
                     });
 
                     courses.push(record.id_course);
-                } else if (record.id_combo_exam) {
+                } else if (record.id_combo) {
+                    const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${record.id_combo}/basic`);
 
+                    dataCombos.push({
+                        id_combo: record.id_combo,
+                        id_transaction: transaction.id,
+                        id_teacher: combo.id_teacher,
+                        price: combo.data.price
+                    })
+
+                    combos.push(record.id_combo);
                 }
             }
 
@@ -288,6 +297,9 @@ class PaymentController {
 
                 for (const course of courses) {
                     const response = await axios.post(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${course}`, data, { headers });
+                }
+                for (const combo of combos) {
+                    const reponse = await axios.post(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${combo}`, data, { headers });
                 }
             }
 

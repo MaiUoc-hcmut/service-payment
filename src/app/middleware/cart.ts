@@ -8,7 +8,7 @@ import { Request, Response, NextFunction } from "express";
 class CheckingCart {
     checkAddCourseToCart = async (req: Request, _res: Response, next: NextFunction) => {
         try {
-            const { id_course } = req.body.data;
+            const { id_course, id_combo } = req.body.data;
             const id_user = req.student.data.id;
 
             const cart = await Cart.findOne({
@@ -17,16 +17,32 @@ class CheckingCart {
                 }
             });
 
-            const record = await CartCourse.findOne({
-                where: {
-                    id_cart: cart.id,
-                    id_course
+            if (id_course) {
+                const recordCourse = await CartCourse.findOne({
+                    where: {
+                        id_cart: cart.id,
+                        id_course
+                    }
+                });
+    
+                if (recordCourse) {
+                    let error = "This course already in the cart!";
+                    return next(createError.BadRequest(error));
                 }
-            });
-
-            if (record) {
-                let error = "This course already in the cart!";
-                return next(createError.BadRequest(error));
+            }
+            
+            if (id_combo) {
+                const recordCombo = await CartCourse.findOne({
+                    where: {
+                        id_cart: cart.id,
+                        id_combo
+                    }
+                });
+    
+                if (recordCombo) {
+                    let error = "This combo already in the cart!";
+                    return next(createError.BadRequest(error));
+                }
             }
 
             next();

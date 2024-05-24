@@ -130,7 +130,7 @@ class CartController {
         const t = await sequelize.transaction();
         try {
             const id_student= req.student.data.id;
-            const { id_course } = req.body.data;
+            const { id_course, id_combo } = req.body.data;
 
             const cart = await Cart.findOne({
                 where: {
@@ -140,7 +140,8 @@ class CartController {
 
             const newRecord = await CartCourse.create({
                 id_cart: cart.id,
-                id_course
+                id_course,
+                id_combo
             }, {
                 transaction: t
             });

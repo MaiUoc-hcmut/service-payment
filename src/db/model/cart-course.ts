@@ -19,6 +19,9 @@ CartCourse.init({
     },
     id_course: {
         type: DataTypes.UUID
+    },
+    id_combo: {
+        type: DataTypes.UUID
     }
 }, {
     sequelize,
