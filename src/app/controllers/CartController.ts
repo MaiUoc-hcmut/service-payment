@@ -82,6 +82,7 @@ class CartController {
             });
 
             let courseList = [];
+            let comboList = [];
 
             for (const record of records) {
                 if (record.id_course) {
@@ -94,8 +95,8 @@ class CartController {
                 else if (record.id_combo) {
                     const id_combo = record.id_combo;
 
-                    const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${id_combo}`);
-                    courseList.push(combo.data);
+                    const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${id_combo}/basic`);
+                    comboList.push(combo.data);
                 }
             }
 
