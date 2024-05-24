@@ -40,10 +40,19 @@ class CartController {
             let courseList = [];
 
             for (const record of records) {
-                const id_course = record.id_course;
+                if (record.id_course) {
+                    const id_course = record.id_course;
 
-                const course = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${id_course}`);
-                courseList.push(course.data);
+                    const course = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${id_course}`);
+                    courseList.push(course.data);
+                }
+
+                else if (record.id_combo) {
+                    const id_combo = record.id_combo;
+
+                    const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${id_combo}`);
+                    courseList.push(combo.data);
+                }
             }
 
             res.status(200).json(courseList);
@@ -75,10 +84,19 @@ class CartController {
             let courseList = [];
 
             for (const record of records) {
-                const id_course = record.id_course;
+                if (record.id_course) {
+                    const id_course = record.id_course;
 
-                const course = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${id_course}`);
-                courseList.push(course.data);
+                    const course = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${id_course}`);
+                    courseList.push(course.data);
+                }
+
+                else if (record.id_combo) {
+                    const id_combo = record.id_combo;
+
+                    const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${id_combo}`);
+                    courseList.push(combo.data);
+                }
             }
 
             res.status(200).json(courseList);
