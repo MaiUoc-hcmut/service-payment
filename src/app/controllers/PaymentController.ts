@@ -55,19 +55,22 @@ class PaymentController {
                 offset: pageSize * (currentPage - 1)
             });
 
+            let response: any[] = [];
+
             for (const record of transactions) {
                 const transaction = await Transaction.findByPk(record.id_transaction);
                 const student = await axios.get(`${process.env.BASE_URL_USER_LOCAL}/student/${transaction.id_user}`);
                 if (record.id_course) {
                     try {
                         const course = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${record.id_course}`);
-                        record.dataValues.course = course.data;
+                        record.dataValues.item = course.data;
                         delete record.dataValues.id_course;
                         delete record.dataValues.id_combo_exam;
                     } catch (error) {
-                        record.dataValues.course = {
+                        record.dataValues.item = {
                             id: record.id_course,
-                            status: "This course has been deleted!"
+                            delete: true,
+                            message: "This courses has been deleted"
                         }
                         delete record.dataValues.id_course;
                         delete record.dataValues.id_combo_exam;
@@ -77,13 +80,14 @@ class PaymentController {
                 if (record.id_combo_exam) {
                     try {
                         const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${record.id_combo_exam}`);
-                        record.dataValues.combo = combo.data;
+                        record.dataValues.item = combo.data;
                         delete record.dataValues.id_combo_exam;
                         delete record.dataValues.id_course;
                     } catch (error) {
                         record.dataValues.combo = {
                             id: record.id_combo_exam,
-                            status: "This combo has been deleted!"
+                            delete: true,
+                            message: "This combo has been deleted!"
                         }
                         delete record.dataValues.id_combo_exam;
                         delete record.dataValues.id_course;
@@ -96,6 +100,11 @@ class PaymentController {
                     email: student.data.email,
                     avatar: student.data.avatar
                 };
+
+                response.push({
+                    ...record.dataValues,
+                    ...transaction
+                })
             }
 
             res.status(200).json(transactions);
@@ -308,9 +317,9 @@ class PaymentController {
                     const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${record.id_combo}/basic`);
 
                     dataCombos.push({
-                        id_combo: record.id_combo,
+                        id_combo: combo.data.id,
                         id_transaction: transaction.id,
-                        id_teacher: combo.id_teacher,
+                        id_teacher: combo.data.id_teacher,
                         price: combo.data.price
                     })
 
