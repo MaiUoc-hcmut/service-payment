@@ -317,7 +317,7 @@ class PaymentController {
                     const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${record.id_combo}/basic`);
 
                     dataCombos.push({
-                        id_combo: combo.data.id,
+                        id_combo_exam: combo.data.id,
                         id_transaction: transaction.id,
                         id_teacher: combo.data.id_teacher,
                         price: combo.data.price
