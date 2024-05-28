@@ -55,6 +55,49 @@ class PaymentController {
                 offset: pageSize * (currentPage - 1)
             });
 
+            for (const record of transactions) {
+                const transaction = await Transaction.findByPk(record.id_transaction);
+                const student = await axios.get(`${process.env.BASE_URL_USER_LOCAL}/student/${transaction.id_user}`);
+                if (record.id_course) {
+                    try {
+                        const course = await axios.get(`${process.env.BASE_URL_COURSE_LOCAL}/courses/${record.id_course}`);
+                        record.dataValues.course = course.data;
+                        delete record.dataValues.id_course;
+                        delete record.dataValues.id_combo_exam;
+                    } catch (error) {
+                        record.dataValues.course = {
+                            id: record.id_course,
+                            status: "This course has been deleted!"
+                        }
+                        delete record.dataValues.id_course;
+                        delete record.dataValues.id_combo_exam;
+                    }
+                }
+
+                if (record.id_combo_exam) {
+                    try {
+                        const combo = await axios.get(`${process.env.BASE_URL_EXAM_LOCAL}/combos/${record.id_combo_exam}`);
+                        record.dataValues.combo = combo.data;
+                        delete record.dataValues.id_combo_exam;
+                        delete record.dataValues.id_course;
+                    } catch (error) {
+                        record.dataValues.combo = {
+                            id: record.id_combo_exam,
+                            status: "This combo has been deleted!"
+                        }
+                        delete record.dataValues.id_combo_exam;
+                        delete record.dataValues.id_course;
+                    }
+                }
+
+                record.dataValues.student = {
+                    id: student.data.id,
+                    name: student.data.name,
+                    email: student.data.email,
+                    avatar: student.data.avatar
+                };
+            }
+
             res.status(200).json(transactions);
         } catch (error: any) {
             console.log(error.message);
